@@ -1,182 +1,41 @@
-import { useState } from "react";
-import JSX from "./components/JSX.jsx";
-import Componentes from "./components/Componentes.jsx";
-import Props from "./components/Props.jsx";
-import VirtualDOM from "./components/VirtualDOM.jsx";
-import ListasKeys from "./components/ListasKeys.jsx";
-import RenderizacaoCondicional from "./components/RenderizacaoCondicional.jsx";
+import { useEffect, useState } from "react";
+import {
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+import CodePractice from "./components/CodePractice.jsx";
+import { lessons } from "./data/lessons.js";
 
-const conceitos = [
-  {
-    id: "jsx",
-    numero: "01",
-    titulo: "JSX",
-    descricao: "Escreva marcação declarativa junto da lógica da interface.",
-    tempo: "4 min",
-    Componente: JSX,
-    fonte: "https://react.dev/learn/writing-markup-with-jsx",
-  },
-  {
-    id: "componentes",
-    numero: "02",
-    titulo: "Componentes",
-    descricao: "Monte interfaces com blocos reutilizáveis e fáceis de compor.",
-    tempo: "5 min",
-    Componente: Componentes,
-    fonte: "https://react.dev/learn/your-first-component",
-  },
-  {
-    id: "props",
-    numero: "03",
-    titulo: "Props",
-    descricao: "Personalize componentes passando dados do pai para o filho.",
-    tempo: "5 min",
-    Componente: Props,
-    fonte: "https://react.dev/learn/passing-props-to-a-component",
-  },
-  {
-    id: "virtual-dom",
-    numero: "04",
-    titulo: "Virtual DOM",
-    descricao: "Entenda como o React renderiza e aplica mudanças à interface.",
-    tempo: "6 min",
-    Componente: VirtualDOM,
-    fonte: "https://react.dev/learn/render-and-commit",
-  },
-  {
-    id: "listas",
-    numero: "05",
-    titulo: "Listas e keys",
-    descricao: "Transforme coleções em elementos e identifique cada item.",
-    tempo: "5 min",
-    Componente: ListasKeys,
-    fonte: "https://react.dev/learn/rendering-lists",
-  },
-  {
-    id: "condicional",
-    numero: "06",
-    titulo: "Renderização condicional",
-    descricao: "Mostre diferentes partes da interface conforme o estado.",
-    tempo: "4 min",
-    Componente: RenderizacaoCondicional,
-    fonte: "https://react.dev/learn/conditional-rendering",
-  },
-];
-
-export default function App() {
-  const [selecionado, setSelecionado] = useState(null);
-  const [concluidos, setConcluidos] = useState([]);
-  const atual = conceitos.find((item) => item.id === selecionado);
-  const indiceAtual = conceitos.findIndex((item) => item.id === selecionado);
-  const progresso = Math.round((concluidos.length / conceitos.length) * 100);
-
-  function alternarConclusao(id) {
-    setConcluidos((itens) =>
-      itens.includes(id) ? itens.filter((item) => item !== id) : [...itens, id],
-    );
-  }
-
-  function voltarAoAcervo() {
-    setSelecionado(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function navegarParaConceito(id) {
-    setSelecionado(id);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  if (atual) {
-    const PaginaConceito = atual.Componente;
-    const anterior = conceitos[indiceAtual - 1];
-    const proximo = conceitos[indiceAtual + 1];
-    const concluido = concluidos.includes(atual.id);
-
-    return (
-      <div className="site-shell">
-        <header className="topbar">
-          <button className="brand brand-button" onClick={voltarAoAcervo} aria-label="Voltar ao acervo React em prática">
-            <span className="brand-mark" aria-hidden="true">&lt;/&gt;</span>
-            <span>react<span className="brand-light">em prática</span></span>
-          </button>
-          <button className="back-button" onClick={voltarAoAcervo}>
-            <span aria-hidden="true">←</span> Acervo de estudos
-          </button>
-        </header>
-
-        <main className="page lesson-page">
-          <div className="lesson-topline">
-            <span className="eyebrow">TRILHA DE FUNDAMENTOS</span>
-            <span className="lesson-count">{atual.numero} <span>/ 06</span></span>
-          </div>
-          <div
-            className="progress-track"
-            role="progressbar"
-            aria-label="Progresso dos estudos"
-            aria-valuenow={progresso}
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <span style={{ width: `${progresso}%` }} />
-          </div>
-
-          <PaginaConceito />
-
-          <section className="lesson-source" aria-label="Referência oficial">
-            <span className="source-icon" aria-hidden="true">↗</span>
-            <div>
-              <strong>Quer se aprofundar?</strong>
-              <p>Consulte a documentação oficial do React para este tema.</p>
-            </div>
-            <a href={atual.fonte} target="_blank" rel="noreferrer">
-              Abrir documentação <span aria-hidden="true">↗</span>
-            </a>
-          </section>
-
-          <div className="lesson-controls">
-            <button
-              className={`complete-button${concluido ? " is-complete" : ""}`}
-              onClick={() => alternarConclusao(atual.id)}
-              aria-pressed={concluido}
-            >
-              <span aria-hidden="true">{concluido ? "✓" : "○"}</span>
-              {concluido ? "Conceito concluído" : "Marcar como concluído"}
-            </button>
-            <nav className="lesson-pagination" aria-label="Navegação entre conceitos">
-              {anterior && (
-                <button className="pagination-button" onClick={() => navegarParaConceito(anterior.id)}>
-                  <span>← Anterior</span>
-                  <strong>{anterior.titulo}</strong>
-                </button>
-              )}
-              {proximo && (
-                <button className="pagination-button pagination-next" onClick={() => navegarParaConceito(proximo.id)}>
-                  <span>Próximo →</span>
-                  <strong>{proximo.titulo}</strong>
-                </button>
-              )}
-            </nav>
-          </div>
-        </main>
-        <footer className="site-footer">
-          Conteúdo de estudo baseado na <a href="https://react.dev/learn" target="_blank" rel="noreferrer">documentação oficial do React</a>.
-        </footer>
-      </div>
-    );
-  }
-
+function SiteHeader({ detail = false }) {
   return (
-    <div className="site-shell">
-      <header className="topbar">
-        <div className="brand">
-          <span className="brand-mark" aria-hidden="true">&lt;/&gt;</span>
-          <span>react<span className="brand-light">em prática</span></span>
-        </div>
+    <header className="topbar">
+      <Link className="brand brand-button" to="/" aria-label="React em prática: início">
+        <span className="brand-mark" aria-hidden="true">&lt;/&gt;</span>
+        <span>react<span className="brand-light">em prática</span></span>
+      </Link>
+      {detail ? (
+        <Link className="back-button" to="/">
+          <span aria-hidden="true">←</span> Acervo de estudos
+        </Link>
+      ) : (
         <a className="topbar-link" href="https://react.dev/learn" target="_blank" rel="noreferrer">
           Documentação React <span aria-hidden="true">↗</span>
         </a>
-      </header>
+      )}
+    </header>
+  );
+}
 
+function HomePage({ completed }) {
+  const progresso = Math.round((completed.length / lessons.length) * 100);
+
+  return (
+    <div className="site-shell">
+      <SiteHeader />
       <main className="page home-page">
         <section className="hero">
           <div className="hero-copy">
@@ -197,10 +56,10 @@ export default function App() {
             </div>
             <strong>Fundamentos<br />do React</strong>
             <div className="hero-card-meta">
-              <span>06 conceitos</span><span className="meta-dot" /><span>29 min</span>
+              <span>{lessons.length} conceitos</span><span className="meta-dot" /><span>64 min</span>
             </div>
             <div className="mini-progress"><span style={{ width: `${progresso}%` }} /></div>
-            <span className="hero-progress-label">{concluidos.length} de 6 concluídos</span>
+            <span className="hero-progress-label">{completed.length} de {lessons.length} concluídos</span>
             <span className="hero-spark" aria-hidden="true">✳</span>
           </div>
           <span className="hero-decoration hero-decoration-one" aria-hidden="true" />
@@ -213,19 +72,17 @@ export default function App() {
               <span className="eyebrow">O SEU PONTO DE PARTIDA</span>
               <h2>Explore os conceitos</h2>
             </div>
-            <span className="section-count">06 AULAS <span>·</span> COM EXEMPLOS INTERATIVOS</span>
+            <span className="section-count">11 AULAS <span>·</span> EXEMPLOS E PRÁTICA DE CÓDIGO</span>
           </div>
 
           <div className="concept-grid">
-            {conceitos.map(({ id, numero, titulo, descricao, tempo }) => {
-              const concluido = concluidos.includes(id);
+            {lessons.map(({ id, numero, titulo, descricao, tempo }) => {
+              const concluido = completed.includes(id);
               return (
-                <button
+                <Link
                   className={`concept-card${concluido ? " card-complete" : ""}`}
                   key={id}
-                  onClick={() => {
-                    navegarParaConceito(id);
-                  }}
+                  to={`/aula/${id}`}
                 >
                   <span className="card-topline">
                     <span className="number">{numero}</span>
@@ -234,7 +91,7 @@ export default function App() {
                   <span className="card-title">{titulo}</span>
                   <span className="card-description">{descricao}</span>
                   <span className="card-action">Estudar conceito <span aria-hidden="true">↗</span></span>
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -244,5 +101,148 @@ export default function App() {
         </footer>
       </main>
     </div>
+  );
+}
+
+function LessonPage({ completed, onComplete }) {
+  const { lessonId } = useParams();
+  const navigate = useNavigate();
+  const lessonIndex = lessons.findIndex((item) => item.id === lessonId);
+  const lesson = lessons[lessonIndex];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [lessonId]);
+
+  if (!lesson) return <Navigate to="/" replace />;
+
+  const Lesson = lesson.Componente;
+  const previous = lessons[lessonIndex - 1];
+  const next = lessons[lessonIndex + 1];
+  const isComplete = completed.includes(lesson.id);
+  const progresso = Math.round((completed.length / lessons.length) * 100);
+
+  function toggleCompletion() {
+    onComplete(lesson.id, !isComplete);
+  }
+
+  return (
+    <div className="site-shell">
+      <SiteHeader detail />
+      <main className="page lesson-page">
+        <div className="lesson-topline">
+          <span className="eyebrow">TRILHA DE FUNDAMENTOS</span>
+          <span className="lesson-count">{lesson.numero} <span>/ {String(lessons.length).padStart(2, "0")}</span></span>
+        </div>
+        <div
+          className="progress-track"
+          role="progressbar"
+          aria-label="Progresso dos estudos"
+          aria-valuenow={progresso}
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <span style={{ width: `${progresso}%` }} />
+        </div>
+
+        <Lesson />
+
+        <section className="practice-invitation">
+          <div>
+            <span className="exercise-label">HORA DE PRATICAR</span>
+            <h2>Teste o que você aprendeu</h2>
+            <p>Abra o editor, escreva um pequeno exemplo e receba uma dica se fizer uma pausa.</p>
+          </div>
+          <Link className="practice-launch-button" to={`/praticar/${lesson.id}`}>
+            Praticar <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+
+        <section className="lesson-source" aria-label="Referência oficial">
+          <span className="source-icon" aria-hidden="true">↗</span>
+          <div>
+            <strong>Quer se aprofundar?</strong>
+            <p>Consulte a documentação oficial para este tema.</p>
+          </div>
+          <a href={lesson.fonte} target="_blank" rel="noreferrer">
+            Abrir documentação <span aria-hidden="true">↗</span>
+          </a>
+        </section>
+
+        <div className="lesson-controls">
+          <button
+            className={`complete-button${isComplete ? " is-complete" : ""}`}
+            onClick={toggleCompletion}
+            aria-pressed={isComplete}
+          >
+            <span aria-hidden="true">{isComplete ? "✓" : "○"}</span>
+            {isComplete ? "Conceito concluído" : "Marcar como concluído"}
+          </button>
+          <nav className="lesson-pagination" aria-label="Navegação entre conceitos">
+            {previous && (
+              <Link className="pagination-button" to={`/aula/${previous.id}`}>
+                <span>← Anterior</span>
+                <strong>{previous.titulo}</strong>
+              </Link>
+            )}
+            {next && (
+              <Link className="pagination-button pagination-next" to={`/aula/${next.id}`}>
+                <span>Próximo →</span>
+                <strong>{next.titulo}</strong>
+              </Link>
+            )}
+          </nav>
+        </div>
+      </main>
+      <footer className="site-footer">
+        Conteúdo de estudo baseado na <a href="https://react.dev/learn" target="_blank" rel="noreferrer">documentação oficial do React</a>.
+      </footer>
+    </div>
+  );
+}
+
+function PracticePage({ onComplete }) {
+  const { lessonId } = useParams();
+  const navigate = useNavigate();
+  const lesson = lessons.find((item) => item.id === lessonId);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [lessonId]);
+
+  if (!lesson) return <Navigate to="/" replace />;
+
+  return (
+    <div className="site-shell practice-shell">
+      <SiteHeader detail />
+      <CodePractice
+        lesson={lesson}
+        onBack={() => navigate(`/aula/${lesson.id}`)}
+        onComplete={() => {
+          onComplete(lesson.id, true);
+          navigate(`/aula/${lesson.id}`);
+        }}
+      />
+    </div>
+  );
+}
+
+export default function App() {
+  const [completed, setCompleted] = useState([]);
+
+  function updateCompletion(id, isComplete) {
+    setCompleted((items) => {
+      if (isComplete) return items.includes(id) ? items : [...items, id];
+      return items.filter((item) => item !== id);
+    });
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage completed={completed} />} />
+      <Route path="/aula/:lessonId" element={<LessonPage completed={completed} onComplete={updateCompletion} />} />
+      <Route path="/praticar/:lessonId" element={<PracticePage onComplete={updateCompletion} />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
