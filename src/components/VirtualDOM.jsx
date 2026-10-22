@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 export default function VirtualDOM() {
@@ -12,69 +11,83 @@ export default function VirtualDOM() {
   }
 
   function aplicarMudancas() {
-    setNomeReal(nomeNovo);
+    setNomeReal(nomeNovo.trim() || "visitante");
     setAtualizado(true);
   }
 
   return (
     <article className="concept">
-      <style>{`
-        .trees { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
-        .tree { border:1px solid #ddd; border-radius:12px; padding:14px; text-align:center; }
-        .node { padding:10px; margin:8px 0; border-radius:8px; background:#f1f1f8; }
-        .new { background:#fff0bd; border:1px solid #d8a52b; }
-        .real { background:#dff6e5; border:1px solid #51a66b; }
-        .tree input { width:90%; min-width:0; }
-        @keyframes pulse { from { transform:scale(.94); } to { transform:scale(1); } }
-        .real { animation:pulse .35s ease; }
-        @media(max-width:520px) { .trees { grid-template-columns:1fr; } }
-      `}</style>
-
       <span className="number">04</span>
-      <h2>Virtual DOM</h2>
+      <h2>Renderização e Virtual DOM</h2>
       <p>
-        Edite o nome abaixo. O Virtual DOM simulado muda primeiro;
-        o DOM real permanece igual até você aplicar as mudanças.
+        Quando o estado muda, o React agenda uma nova renderização: chama os
+        componentes para calcular a interface desejada e depois aplica ao DOM
+        as mudanças necessárias. Esse fluxo é descrito na documentação como
+        <strong> trigger, render e commit</strong>.
+      </p>
+      <p>
+        “Virtual DOM” é um apelido popular para a representação da interface
+        usada nesse processo, mas não significa que exista uma cópia visual
+        manual que você precise atualizar. Na prática, atualize o estado e
+        descreva o resultado em JSX; o React coordena a renderização e o commit.
       </p>
 
-      <label>Editar nome:</label>
-      <input
-        value={nomeNovo}
-        onChange={(e) => editarNome(e.target.value)}
-        placeholder="Digite um nome"
-      />
+      <h3>Fluxo simplificado</h3>
+      <pre><code>{`// 1. O evento atualiza o estado
+setNome("Lia");
 
-      <div className="trees">
-        <section className="tree">
-          <h3>Virtual DOM</h3>
-          <div className="node">App</div>
-          <div className="node">Perfil</div>
-          <div className="node new">
-            Nome: {nomeNovo || "(vazio)"}
-          </div>
-          <small>Nova representação</small>
-        </section>
+// 2. O componente renderiza o JSX com o novo estado
+return <p>Olá, {nome}!</p>;
 
-        <section className="tree">
-          <h3>DOM real</h3>
-          <div className="node">App</div>
-          <div className="node">Perfil</div>
-          <div className="node real">
-            Nome: {nomeReal || "(vazio)"}
-          </div>
-          <small>Interface exibida</small>
-        </section>
-      </div>
+// 3. O React faz o commit das mudanças necessárias no DOM`}</code></pre>
 
-      <button onClick={aplicarMudancas} disabled={nomeNovo === nomeReal}>
-        Aplicar mudanças
-      </button>
-
-      {atualizado && (
-        <p className="note">
-          Mudanças aplicadas! O DOM real agora exibe o novo nome.
+      <section className="exercise-box">
+        <span className="exercise-label">SIMULAÇÃO DIDÁTICA</span>
+        <h3>Compare a interface antes e depois</h3>
+        <p>
+          Edite o rascunho e aplique a mudança para observar uma comparação
+          visual. É uma analogia para estudar o fluxo — o React desta própria
+          página já renderiza o campo e atualiza a tela normalmente.
         </p>
-      )}
+        <div className="practice-controls">
+          <label htmlFor="new-name">Novo nome</label>
+          <input
+            id="new-name"
+            value={nomeNovo}
+            onChange={(event) => editarNome(event.target.value)}
+            placeholder="Digite um nome"
+          />
+          <button onClick={aplicarMudancas} disabled={nomeNovo === nomeReal}>
+            Aplicar na simulação
+          </button>
+        </div>
+
+        <div className="trees">
+          <section className="tree">
+            <h3>Rascunho da interface</h3>
+            <div className="node">Perfil</div>
+            <div className="node new">Nome: {nomeNovo || "(vazio)"}</div>
+            <small>Resultado desejado</small>
+          </section>
+          <section className="tree" aria-live="polite">
+            <h3>Após aplicar</h3>
+            <div className="node">Perfil</div>
+            <div className="node real">Nome: {nomeReal}</div>
+            <small>Interface comprometida nesta simulação</small>
+          </section>
+        </div>
+        {atualizado && (
+          <p className="note" role="status">
+            Simulação atualizada. Em um app real, você atualizaria o estado; o
+            React cuidaria do novo render e do commit.
+          </p>
+        )}
+      </section>
+
+      <p className="note">
+        Não altere o DOM diretamente para refletir o estado do React. Primeiro,
+        represente a mudança no estado; depois descreva a interface com JSX.
+      </p>
     </article>
   );
 }
