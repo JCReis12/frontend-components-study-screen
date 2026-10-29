@@ -104,7 +104,7 @@ export const lessons = [
   {
     id: "estado",
     numero: "07",
-    titulo: "Estado e useState",
+    titulo: "State e useState",
     descricao: "Guarde valores que mudam e atualize a interface com Hooks.",
     tempo: "6 min",
     Componente: Estado,
